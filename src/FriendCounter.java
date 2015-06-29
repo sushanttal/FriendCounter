@@ -14,9 +14,9 @@ public class FriendCounter {
 
     public static void main(String args[]) throws IOException, InterruptedException {
 
-        Thread.sleep(30000);
+        //Thread.sleep(30000);
 
-        if(args.length < 3)
+       if(args.length < 3)
         {
             System.out.println("Please enter three file names along with path in following order :");
             System.out.println("1. orkut ungraph file");
@@ -24,51 +24,67 @@ public class FriendCounter {
             System.out.println("3. output file ");
         }
 
-        Map<String, AtomicInteger> edgeFriends = new HashMap<String, AtomicInteger>();
-        Map<String, Integer> queryFriends = new HashMap<String, Integer>();
+        Map<Integer, Integer> edgeFriends = new HashMap<Integer, Integer>();
+        Map<Integer, Integer> queryFriends = new HashMap<Integer, Integer>();
 
         Long startTime = System.currentTimeMillis();
 
         FileChannel inChannel = new RandomAccessFile(new File(args[0]), "r").getChannel();
         ByteBuffer buffer = ByteBuffer.allocateDirect(10 * 1024 * 1204);
 
-       Charset charset = Charset.forName("ASCII");
-       CharsetDecoder decoder = charset.newDecoder();
+       //Charset charset = Charset.forName("US-ASCII");
+       //CharsetDecoder decoder = charset.newDecoder();
 
-        char[] line = new char[2048];
-        //byte[] line = new byte[1024];
-        int lineIndex = 0;
-        String node;
+       // char[] line = new char[1048];
+      //  byte[] line = new byte[1024];
+        int number = 0;
+        int key=0;
+        int lineIndex = 1;
+        Integer node;
         while(inChannel.read(buffer) > 0) {
-         //   buffer.flip();
-           CharBuffer charBuffer = decoder.decode(buffer);
+            buffer.flip();
+         //  CharBuffer charBuffer = decoder.decode(buffer);
 
 
-           for(int i = 0; i < charBuffer.limit(); i++) {
-                char ch = charBuffer.get(i);
+           for(int i = 0; i < buffer.limit(); i++) {
+                Byte by = buffer.get(i);
+               int ch = by.intValue();
           //  for(int i =0; i < buffer.limit(); i++) {
             //    byte ch = buffer.get(i);
               //  String hex = Integer.(ch);
                // System.out.println(hex);
-                if(ch == '\n' || ch == '\r') {
+                if(ch == 12 || ch == 10 || ch == 13) {
 
-                    lineIndex=0;
-                    Arrays.fill(line, ' ');
+                    number = 0;
+                    lineIndex=1;
+                   // Arrays.fill(line, (byte) 32);
 
-                } else if(ch == '\t' || ch == ' '){
-                    node = String.valueOf(line).trim();
+                } else if(ch == 9 || ch == 32){
 
-                    AtomicInteger autoint = edgeFriends.get(node);
+                    if(number != 0)
+                        key = number;
+                 //  System.out.println(key);
+                    Integer autoint = edgeFriends.get(key);
                     if(autoint == null)
-                        autoint = new AtomicInteger(0);
-                    edgeFriends.put(node.trim(), new AtomicInteger(autoint.incrementAndGet()));
+                        autoint = new Integer(0);
+                    edgeFriends.put(key, autoint + 1);
                    // System.out.println(node + " : " + autoint.get());
-                    lineIndex=0;
-                    Arrays.fill(line, ' ');
+                    lineIndex=1;
+                    number = 0;
+                   // Arrays.fill(line, (byte) 32);
                 }
                 else {
                     //System.out.print(ch);
-                   line[lineIndex] = ch;
+                    //line[lineIndex] = by;
+
+                    if(ch == 48 || ch == 49 || ch == 50 || ch == 51 || ch == 52 || ch == 53 || ch == 54 || ch == 55 || ch == 56 || ch == 57  )
+                    {
+                       number = number * 10 + (ch - '0');
+                      //  System.out.println(number);
+                    }
+                    else {
+                        System.out.println(ch);
+                    }
                     lineIndex = lineIndex + 1;
                    // System.out.print(lineIndex);
                 }
@@ -76,16 +92,20 @@ public class FriendCounter {
             }
 
             buffer.clear();
+            //buffer.flip();
         }
 
 
 
-        /* Slower one.
+        /* Slower one. *
+
+        Long startTime = System.currentTimeMillis();
 
         FileInputStream fin = new FileInputStream(new File("/Users/sushantt/Documents/Talentica/RandD/com-orkut.ungraph.txt"));
         //BufferedReader edgeReader = new BufferedReader(new InputStreamReader(fin));
         Scanner edgeReader = new Scanner(fin, "UTF-8");
-
+        Map<String, AtomicInteger> edgeFriends = new HashMap<String, AtomicInteger>();
+        Map<String, Integer> queryFriends = new HashMap<String, Integer>();
 
         while(edgeReader.hasNextLine()) {
 
@@ -101,7 +121,7 @@ public class FriendCounter {
 
         System.out.println("Time : " + ((System.currentTimeMillis() - startTime) / 1000));
         edgeReader.close();
-        fin.close();*/
+        fin.close(); */
 
         FileInputStream fin1 = new FileInputStream(new File(args[1]));
         BufferedReader queryReader = new BufferedReader(new InputStreamReader(fin1));
@@ -114,19 +134,20 @@ public class FriendCounter {
         while (line1 != null) {
 
             String queryNode = line1.trim();
-            if(edgeFriends.get(queryNode) != null) {
+            Integer parsedNode = Integer.parseInt(queryNode);
+            if(edgeFriends.get(parsedNode) != null) {
                 line1 = queryReader.readLine();
-                queryFriends.put(queryNode, edgeFriends.get(queryNode).get());
+                queryFriends.put(parsedNode, edgeFriends.get(parsedNode));
                 continue;
             }
 
-            queryFriends.put(queryNode, 0);
+            queryFriends.put(parsedNode, 0);
 
             line1 = queryReader.readLine();
         }
 
         int totalCount = 0;
-        for(String query : queryFriends.keySet()) {
+        for(Integer query : queryFriends.keySet()) {
 
           //  System.out.println(query + " : " + edgeFriends.get(query).get());
             totalCount++;
@@ -141,8 +162,6 @@ public class FriendCounter {
 
         fin1.close();
         queryReader.close();
-
-
 
 
         System.out.println("Time : " + ((System.currentTimeMillis() - startTime) / 1000));
