@@ -1,11 +1,8 @@
 import java.io.*;
 import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
 import java.nio.channels.FileChannel;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by sushantt on 28/06/15.
@@ -16,7 +13,7 @@ public class FriendCounter {
 
         Thread.sleep(30000);
 
-       if(args.length < 3)
+        if(args.length < 3)
         {
             System.out.println("Please enter three file names along with path in following order :");
             System.out.println("1. orkut ungraph file");
@@ -30,69 +27,34 @@ public class FriendCounter {
         Long startTime = System.currentTimeMillis();
 
         FileChannel inChannel = new RandomAccessFile(new File(args[0]), "r").getChannel();
-        ByteBuffer buffer = ByteBuffer.allocateDirect(10 * 1024 * 1204);
+        ByteBuffer buffer = ByteBuffer.allocateDirect(10 * 1024 * 1024);
 
-       //Charset charset = Charset.forName("US-ASCII");
-       //CharsetDecoder decoder = charset.newDecoder();
-
-       // char[] line = new char[1048];
-      //  byte[] line = new byte[1024];
         int number = 0;
-        int key=0;
-        int lineIndex = 1;
-        Integer node;
+
         while(inChannel.read(buffer) > 0) {
             buffer.flip();
-         //  CharBuffer charBuffer = decoder.decode(buffer);
 
-
-           for(int i = 0; i < buffer.limit(); i++) {
-                Byte by = buffer.get(i);
-               int ch = by.intValue();
-          //  for(int i =0; i < buffer.limit(); i++) {
-            //    byte ch = buffer.get(i);
-              //  String hex = Integer.(ch);
-               // System.out.println(hex);
+            for(int i = 0; i < buffer.limit(); i++) {
+                int ch = (int) buffer.get(i);
                 if(ch == 12 || ch == 10 || ch == 13) {
-
                     number = 0;
-                    lineIndex=1;
-                   // Arrays.fill(line, (byte) 32);
-
                 } else if(ch == 9 || ch == 32){
 
-                    if(number != 0)
-                        key = number;
-                 //  System.out.println(key);
-                    Integer autoint = edgeFriends.get(key);
-                    if(autoint == null)
-                        autoint = 0;
-                    edgeFriends.put(key, autoint + 1);
-                   // System.out.println(node + " : " + autoint.get());
-                    lineIndex=1;
+                    if(number != 0) {
+                        Integer autoint = edgeFriends.get(number);
+                        if (autoint == null)
+                            autoint = 0;
+                        edgeFriends.put(number, autoint + 1);
+                    }
                     number = 0;
-                   // Arrays.fill(line, (byte) 32);
                 }
                 else {
-                    //System.out.print(ch);
-                    //line[lineIndex] = by;
-
-                  //  if(ch == 48 || ch == 49 || ch == 50 || ch == 51 || ch == 52 || ch == 53 || ch == 54 || ch == 55 || ch == 56 || ch == 57  )
-                    {
-                       number = number * 10 + (ch - '0');
-                      //  System.out.println(number);
-                    }
-                    //else {
-                      //  System.out.println(ch);
-                    //}
-                    lineIndex = lineIndex + 1;
-                   // System.out.print(lineIndex);
+                    number = number * 10 + (ch - '0');
                 }
 
             }
 
             buffer.clear();
-            //buffer.flip();
         }
 
 
@@ -148,8 +110,6 @@ public class FriendCounter {
 
         int totalCount = 0;
         for(Integer query : queryFriends.keySet()) {
-
-          //  System.out.println(query + " : " + edgeFriends.get(query).get());
             totalCount++;
             queryWriter.write(query + " : " + queryFriends.get(query) + "\n");
         }
