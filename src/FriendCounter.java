@@ -14,7 +14,7 @@ public class FriendCounter {
 
     public static void main(String args[]) throws IOException, InterruptedException {
 
-        //Thread.sleep(30000);
+        Thread.sleep(30000);
 
        if(args.length < 3)
         {
@@ -66,7 +66,7 @@ public class FriendCounter {
                  //  System.out.println(key);
                     Integer autoint = edgeFriends.get(key);
                     if(autoint == null)
-                        autoint = new Integer(0);
+                        autoint = 0;
                     edgeFriends.put(key, autoint + 1);
                    // System.out.println(node + " : " + autoint.get());
                     lineIndex=1;
@@ -77,14 +77,14 @@ public class FriendCounter {
                     //System.out.print(ch);
                     //line[lineIndex] = by;
 
-                    if(ch == 48 || ch == 49 || ch == 50 || ch == 51 || ch == 52 || ch == 53 || ch == 54 || ch == 55 || ch == 56 || ch == 57  )
+                  //  if(ch == 48 || ch == 49 || ch == 50 || ch == 51 || ch == 52 || ch == 53 || ch == 54 || ch == 55 || ch == 56 || ch == 57  )
                     {
                        number = number * 10 + (ch - '0');
                       //  System.out.println(number);
                     }
-                    else {
-                        System.out.println(ch);
-                    }
+                    //else {
+                      //  System.out.println(ch);
+                    //}
                     lineIndex = lineIndex + 1;
                    // System.out.print(lineIndex);
                 }
