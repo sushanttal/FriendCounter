@@ -23,7 +23,8 @@ public class FriendCounter {
 
         Long startTime = System.currentTimeMillis();
 
-        Map<Integer, Integer> edgeFriends = new HashMap<Integer, Integer>();
+        Map<Integer, Integer> edgeFriends = new HashMap<Integer, Integer>(100000);
+
 
         FileInputStream fin1 = new FileInputStream(new File(args[1]));
         BufferedReader queryReader = new BufferedReader(new InputStreamReader(fin1));
@@ -61,9 +62,7 @@ public class FriendCounter {
 
                         }
                         else {
-
-                            Integer autoint = edgeFriends.get(number);
-                            edgeFriends.put(number, autoint + 1);
+                            edgeFriends.put(number, edgeFriends.get(number) + 1);
                         }
                     }
                     number = 0;
