@@ -11,7 +11,7 @@ public class FriendCounter {
 
     public static void main(String args[]) throws IOException, InterruptedException {
 
-        Thread.sleep(30000);
+       // Thread.sleep(30000);
 
         if(args.length < 3)
         {
@@ -45,6 +45,7 @@ public class FriendCounter {
         ByteBuffer buffer = ByteBuffer.allocateDirect(10 * 1024 * 1024);
 
         int number = 0;
+        int keynumber =0;
 
         while(inChannel.read(buffer) > 0) {
             buffer.flip();
@@ -52,18 +53,17 @@ public class FriendCounter {
             for(int i = 0; i < buffer.limit(); i++) {
                 int ch = (int) buffer.get(i);
                 if(ch == 12 || ch == 10 || ch == 13) {
+                    if(edgeFriends.get(number) != null) {
+                            edgeFriends.put(number, edgeFriends.get(number) + 1);
+                    }
+                    if(edgeFriends.get(keynumber) != null) {
+                        edgeFriends.put(keynumber, edgeFriends.get(keynumber) +1);
+                    }
                     number = 0;
                 } else if(ch == 9 || ch == 32){
 
                     if(number != 0) {
-
-                        if (edgeFriends.get(number) == null)
-                        {
-
-                        }
-                        else {
-                            edgeFriends.put(number, edgeFriends.get(number) + 1);
-                        }
+                        keynumber = number;
                     }
                     number = 0;
                 }
