@@ -53,11 +53,13 @@ public class FriendCounter {
             for(int i = 0; i < buffer.limit(); i++) {
                 int ch = (int) buffer.get(i);
                 if(ch == 12 || ch == 10 || ch == 13) {
-                    if(edgeFriends.get(number) != null) {
-                            edgeFriends.put(number, edgeFriends.get(number) + 1);
+                    Integer num = edgeFriends.get(number);
+                    if( num != null) {
+                            edgeFriends.put(number, num + 1);
                     }
-                    if(edgeFriends.get(keynumber) != null) {
-                        edgeFriends.put(keynumber, edgeFriends.get(keynumber) +1);
+                    num = edgeFriends.get(keynumber);
+                    if( num != null) {
+                        edgeFriends.put(keynumber, num +1);
                     }
                     number = 0;
                 } else if(ch == 9 || ch == 32){
